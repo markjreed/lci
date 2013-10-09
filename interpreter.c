@@ -1971,17 +1971,25 @@ ValueObject *opExpIntegerInteger(ValueObject *a,
 {
     long long base  = getInteger(a), 
               power = getInteger(b),
-              result = 1;
+              result;
 
     if (power == 0) {
       result = 1;
     } else if (base == 0) {
       result = 0;
-    } else if (power < 0) {
-      result = 0;
+    } else if (base == 1) {
+      result = 1;
     } else {
+      int recip = 0;
+      if (power < 0) {
+        recip = 1;
+        power = -power;
+      }
+      result = 1;
       while (power--) 
         result *= base;
+      if (recip)
+        result = 1 / result;
     }
 	return createIntegerValueObject(result);
 }
