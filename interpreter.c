@@ -1975,8 +1975,6 @@ ValueObject *opExpIntegerInteger(ValueObject *a,
 
     if (power == 0) {
       result = 1;
-    } else if (base == 0) {
-      result = 0;
     } else if (base == 1) {
       result = 1;
     } else {
@@ -1988,8 +1986,13 @@ ValueObject *opExpIntegerInteger(ValueObject *a,
       result = 1;
       while (power--) 
         result *= base;
-      if (recip)
+      if (recip) {
+        if (!result) {
+		  error(IN_DIVISION_BY_ZERO);
+		  return NULL;
+        }
         result = 1 / result;
+      }
     }
 	return createIntegerValueObject(result);
 }
