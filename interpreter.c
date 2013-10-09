@@ -1958,6 +1958,35 @@ ValueObject *opModIntegerInteger(ValueObject *a,
 }
 
 /**
+ * Calculates the power of an integer raised to an integer.
+ *
+ * \param [in] a The first operand (base).
+ *
+ * \param [in] b The second operand (exponent).
+ *
+ * \return A pointer to the value of the result of \a to the \a b power.
+ */
+ValueObject *opExpIntegerInteger(ValueObject *a,
+                                 ValueObject *b)
+{
+    long long base  = getInteger(a), 
+              power = getInteger(b),
+              result = 1;
+
+    if (base == 0) {
+      result = 0;
+    } else if (power == 0) {
+      result = 1;
+    } else if (power < 0) {
+      result = 0;
+    } else {
+      while (power--) 
+        result *= base;
+    }
+	return createIntegerValueObject(result);
+}
+
+/**
  * Adds an integer to a decimal.
  *
  * \param [in] a The first operand.
@@ -2073,6 +2102,31 @@ ValueObject *opModIntegerFloat(ValueObject *a,
 }
 
 /**
+ * Calculates the power of an integer raised to a decimal.
+ *
+ * \param [in] a The first operand (base).
+ *
+ * \param [in] b The second operand (exponent).
+ *
+ * \return A pointer to the value of the result of \a to the \a b power.
+ */
+ValueObject *opExpIntegerFloat(ValueObject *a,
+                               ValueObject *b)
+{
+    long long base  = getInteger(a); 
+    double    power = getFloat(b),
+              result;
+
+    if (base == 0) {
+      result = 0.0;
+    } else if (fabs(power) < FLT_EPSILON) {
+      result = 1.0;
+    } else {
+      result = pow((double)base, (double)power);
+    }
+	return createFloatValueObject(result);
+}
+/**
  * Adds a decimal to an integer.
  *
  * \param [in] a The first operand.
@@ -2185,6 +2239,31 @@ ValueObject *opModFloatInteger(ValueObject *a,
 		return NULL;
 	}
 	return createFloatValueObject((float)(fmod(getFloat(a), (double)(getInteger(b)))));
+}
+
+/**
+ * Calculates the power of a decimal raised to an integer power.
+ *
+ * \param [in] a The first operand (base).
+ *
+ * \param [in] b The second operand (exponent).
+ *
+ * \return A pointer to the value of the result of \a to the \a b power.
+ */
+ValueObject *opExpFloatInteger(ValueObject *a,
+                               ValueObject *b)
+{
+    double base  = getFloat(a), result; 
+    long long  power = getInteger(b);
+
+    if (fabs(base) < FLT_EPSILON) {
+      result = 0.0;
+    } else if (power == 0) {
+      result = 1.0;
+    } else {
+      result = pow((double)base, (double)power);
+    }
+	return createFloatValueObject(result);
 }
 
 /**
@@ -2302,20 +2381,47 @@ ValueObject *opModFloatFloat(ValueObject *a,
 	return createFloatValueObject((float)(fmod(getFloat(a), getFloat(b))));
 }
 
+/**
+ * Calculates the power of a decimal raised to a decimal power.
+ *
+ * \param [in] a The first operand (base).
+ *
+ * \param [in] b The second operand (exponent).
+ *
+ * \return A pointer to the value of the result of \a to the \a b power.
+ */
+ValueObject *opExpFloatFloat(ValueObject *a,
+                             ValueObject *b)
+{
+    double base  = getFloat(a), 
+           power = getFloat(b),
+           result; 
+
+    if (fabs(base) < FLT_EPSILON) {
+      result = 0.0;
+    } else if (fabs(power) < FLT_EPSILON) {
+      result = 1.0;
+    } else {
+      result = pow((double)base, (double)power);
+    }
+	return createFloatValueObject(result);
+}
+
 /*
  * A jump table for arithmetic operations.  The first index determines the
  * particular arithmetic operation to perform, the second index determines the
  * type of the first argument, and the third index determines the type of the
  * second object.
  */
-static ValueObject *(*ArithOpJumpTable[7][2][2])(ValueObject *, ValueObject *) = {
+static ValueObject *(*ArithOpJumpTable[8][2][2])(ValueObject *, ValueObject *) = {
 	{ { opAddIntegerInteger, opAddIntegerFloat }, { opAddFloatInteger, opAddFloatFloat } },
 	{ { opSubIntegerInteger, opSubIntegerFloat }, { opSubFloatInteger, opSubFloatFloat } },
 	{ { opMultIntegerInteger, opMultIntegerFloat }, { opMultFloatInteger, opMultFloatFloat } },
 	{ { opDivIntegerInteger, opDivIntegerFloat }, { opDivFloatInteger, opDivFloatFloat } },
 	{ { opModIntegerInteger, opModIntegerFloat }, { opModFloatInteger, opModFloatFloat } },
 	{ { opMaxIntegerInteger, opMaxIntegerFloat }, { opMaxFloatInteger, opMaxFloatFloat } },
-	{ { opMinIntegerInteger, opMinIntegerFloat }, { opMinFloatInteger, opMinFloatFloat } }
+	{ { opMinIntegerInteger, opMinIntegerFloat }, { opMinFloatInteger, opMinFloatFloat } },
+	{ { opExpIntegerInteger, opExpIntegerFloat }, { opExpFloatInteger, opExpFloatFloat } }
 };
 
 /**
@@ -2859,7 +2965,8 @@ ValueObject *interpretConcatOpExprNode(OpExprNode *expr,
  * A jump table for operations.  The index of a function in the table is given
  * by its its index in the enumerated OpType type.
  */
-static ValueObject *(*OpExprJumpTable[14])(OpExprNode *, ScopeObject *) = {
+static ValueObject *(*OpExprJumpTable[15])(OpExprNode *, ScopeObject *) = {
+	interpretArithOpExprNode,
 	interpretArithOpExprNode,
 	interpretArithOpExprNode,
 	interpretArithOpExprNode,

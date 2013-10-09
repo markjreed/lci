@@ -515,6 +515,7 @@ typedef enum {
 	OP_MOD,  /**< Modulo. */
 	OP_MAX,  /**< Maximum. */
 	OP_MIN,  /**< Minimum. */
+    OP_EXP,   /**< Exponentiation */
 
 	OP_AND,  /**< Logical AND. */
 	OP_OR,   /**< Logical OR. */
@@ -524,7 +525,7 @@ typedef enum {
 	OP_EQ,   /**< Equality. */
 	OP_NEQ,  /**< Inequality. */
 
-	OP_CAT   /**< String concatenation. */
+	OP_CAT  /**< String concatenation. */
 } OpType;
 
 /**

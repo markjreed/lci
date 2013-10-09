@@ -2179,6 +2179,13 @@ ExprNode *parseOpExprNode(Token ***tokenp)
 		debug("ET_OP (OP_NEQ)");
 #endif
 	}
+	else if(acceptToken(&tokens, TT_POWROF)) {
+		type = OP_EXP;
+		arity = AT_BINARY;
+#ifdef DEBUG
+		debug("ET_OP (OP_NEQ)");
+#endif
+	}
 	/* N-ary operators */
 	else if (acceptToken(&tokens, TT_ALLOF)) {
 		type = OP_AND;
@@ -2346,6 +2353,7 @@ ExprNode *parseExprNode(Token ***tokenp)
 			|| peekToken(&tokens, TT_PRODUKTOF)
 			|| peekToken(&tokens, TT_QUOSHUNTOF)
 			|| peekToken(&tokens, TT_MODOF)
+			|| peekToken(&tokens, TT_POWROF)
 			|| peekToken(&tokens, TT_BIGGROF)
 			|| peekToken(&tokens, TT_SMALLROF)
 			|| peekToken(&tokens, TT_BOTHOF)
