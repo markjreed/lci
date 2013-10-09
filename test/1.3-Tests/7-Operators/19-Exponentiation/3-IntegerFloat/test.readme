@@ -1,2 +1,2 @@
-This test makes sure the addition operator works correctly on integer and
+This test makes sure the exponentiation operator works correctly on integer and
 floating point decimal arguments.

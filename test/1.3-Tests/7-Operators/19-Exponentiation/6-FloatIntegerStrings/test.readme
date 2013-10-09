@@ -1,2 +1,2 @@
-This test makes sure the addition operator works correctly on strings containing
+This test makes sure the exponentiation operator works correctly on strings containing
 foating point decimal and integer arguments.

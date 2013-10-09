@@ -1,2 +1,2 @@
-This test checks that the addition operator can be nested as the argument of
-itself.
+This test checks that the exponentiation operator handles raising to the
+zero power correctly.
