@@ -2183,7 +2183,7 @@ ExprNode *parseOpExprNode(Token ***tokenp)
 		type = OP_EXP;
 		arity = AT_BINARY;
 #ifdef DEBUG
-		debug("ET_OP (OP_NEQ)");
+		debug("ET_OP (OP_EXP)");
 #endif
 	}
 	/* N-ary operators */
