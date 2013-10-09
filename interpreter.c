@@ -1973,10 +1973,10 @@ ValueObject *opExpIntegerInteger(ValueObject *a,
               power = getInteger(b),
               result = 1;
 
-    if (base == 0) {
-      result = 0;
-    } else if (power == 0) {
+    if (power == 0) {
       result = 1;
+    } else if (base == 0) {
+      result = 0;
     } else if (power < 0) {
       result = 0;
     } else {
@@ -2113,18 +2113,7 @@ ValueObject *opModIntegerFloat(ValueObject *a,
 ValueObject *opExpIntegerFloat(ValueObject *a,
                                ValueObject *b)
 {
-    long long base  = getInteger(a); 
-    double    power = getFloat(b),
-              result;
-
-    if (base == 0) {
-      result = 0.0;
-    } else if (fabs(power) < FLT_EPSILON) {
-      result = 1.0;
-    } else {
-      result = pow((double)base, (double)power);
-    }
-	return createFloatValueObject(result);
+	return createFloatValueObject((float)(pow((double)(getInteger(a)), getFloat(b))));
 }
 /**
  * Adds a decimal to an integer.
@@ -2253,17 +2242,7 @@ ValueObject *opModFloatInteger(ValueObject *a,
 ValueObject *opExpFloatInteger(ValueObject *a,
                                ValueObject *b)
 {
-    double base  = getFloat(a), result; 
-    long long  power = getInteger(b);
-
-    if (fabs(base) < FLT_EPSILON) {
-      result = 0.0;
-    } else if (power == 0) {
-      result = 1.0;
-    } else {
-      result = pow((double)base, (double)power);
-    }
-	return createFloatValueObject(result);
+	return createFloatValueObject((float)pow(getFloat(a), (double)getInteger(b)));
 }
 
 /**
@@ -2393,18 +2372,7 @@ ValueObject *opModFloatFloat(ValueObject *a,
 ValueObject *opExpFloatFloat(ValueObject *a,
                              ValueObject *b)
 {
-    double base  = getFloat(a), 
-           power = getFloat(b),
-           result; 
-
-    if (fabs(base) < FLT_EPSILON) {
-      result = 0.0;
-    } else if (fabs(power) < FLT_EPSILON) {
-      result = 1.0;
-    } else {
-      result = pow((double)base, (double)power);
-    }
-	return createFloatValueObject(result);
+	return createFloatValueObject((float)pow(getFloat(a), getFloat(b)));
 }
 
 /*
